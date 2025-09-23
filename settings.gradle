@@ -1,0 +1,6 @@
+rootProject.name = 'escaperoom-hub'
+
+include 'common'
+include 'common:snowflake'
+include 'service'
+include 'monolithic'
