@@ -3,6 +3,7 @@ package cs.escaperoomhub.monolithic.exception;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Getter
@@ -27,6 +28,18 @@ public class ErrorResponse {
         private String reason;
     }
 
+    // ErrorResponse 클래스에 추가할 메서드
+    public static ErrorResponse of(ErrorCode code, String message, String traceId, String serviceId, String path) {
+        return ErrorResponse.builder()
+                .message(message)  // 커스텀 메시지 사용
+                .code(code.getCode())
+                .traceId(traceId)
+                .serviceId(serviceId)
+                .path(path)
+                .timestamp(OffsetDateTime.now().toString())
+                .build();
+    }
+
     public static ErrorResponse of(ErrorCode ec, String traceId, String serviceId, String path) {
         return ErrorResponse.builder()
                 .message(ec.getMessage())
@@ -34,7 +47,7 @@ public class ErrorResponse {
                 .traceId(traceId)
                 .serviceId(serviceId)
                 .path(path)
-                .timestamp(java.time.OffsetDateTime.now().toString())
+                .timestamp(OffsetDateTime.now().toString())
                 .build();
     }
 
@@ -47,7 +60,7 @@ public class ErrorResponse {
                 .traceId(traceId)
                 .serviceId(serviceId)
                 .path(path)
-                .timestamp(java.time.OffsetDateTime.now().toString())
+                .timestamp(OffsetDateTime.now().toString())
                 .build();
     }
 

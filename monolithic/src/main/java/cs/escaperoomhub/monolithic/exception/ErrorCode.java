@@ -12,9 +12,9 @@ public enum ErrorCode {
     RESOURCE_NOT_FOUND(404, "C004", "Resource not found"),
 
     // Member
-    EMAIL_DUPLICATION(400, "M001", "Email is Duplication"),
-    LOGIN_INPUT_INVALID(400, "M002", "Login input is invalid"),
-    MEMBER_NOT_FOUND(404, "M003", "Member not found"),
+//    EMAIL_DUPLICATION(400, "M001", "Email is Duplication"),
+//    LOGIN_INPUT_INVALID(400, "M002", "Login input is invalid"),
+//    MEMBER_NOT_FOUND(404, "M003", "Member not found"),
 
     // Point
     INSUFFICIENT_BALANCE(409, "P001", "Insufficient balance"),

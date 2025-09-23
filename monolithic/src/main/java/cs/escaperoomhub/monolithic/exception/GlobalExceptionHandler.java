@@ -1,10 +1,13 @@
 package cs.escaperoomhub.monolithic.exception;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.OptimisticLockException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.StaleObjectStateException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -24,6 +27,15 @@ public class GlobalExceptionHandler {
 
     private String path(HttpServletRequest req) {
         return req != null ? req.getRequestURI() : null;
+    }
+
+    @ExceptionHandler({ObjectOptimisticLockingFailureException.class, OptimisticLockException.class,
+            StaleObjectStateException.class})
+    public ResponseEntity<ErrorResponse> handleOptimisticLockFailure(ObjectOptimisticLockingFailureException e, HttpServletRequest request) {
+        log.warn("Optimistic lock failure", e);
+        ErrorCode errorCode = ErrorCode.TIMESLOT_ALREADY_RESERVED;
+        ErrorResponse body = ErrorResponse.of(errorCode, errorCode.getMessage(), traceId(), serviceId, path(request));
+        return ResponseEntity.status(errorCode.getStatus()).body(body);
     }
 
     /**
@@ -100,7 +112,7 @@ public class GlobalExceptionHandler {
         else log.warn("Business exception", e);
 
         ErrorCode ec = e.getErrorCode();
-        ErrorResponse body = ErrorResponse.of(ec, traceId(), serviceId, path(request));
+        ErrorResponse body = ErrorResponse.of(ec, e.getMessage(), traceId(), serviceId, path(request));
         return ResponseEntity.status(ec.getStatus()).body(body);
     }
 

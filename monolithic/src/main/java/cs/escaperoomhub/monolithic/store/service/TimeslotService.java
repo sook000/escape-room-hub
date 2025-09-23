@@ -24,4 +24,15 @@ public class TimeslotService {
         timeslotRepository.save(timeslot);
         return totalPrice;
     }
+
+    @Transactional
+    public Long reserveWithPessimisticLock(Long timeslotId, Long personCount) {
+        Timeslot timeslot = timeslotRepository.findByIdWithPessimisticLock(timeslotId)
+                .orElseThrow(() -> Errors.notFound("타임슬롯이 존재하지 않습니다."));
+
+        Long totalPrice = timeslot.calculatePrice(personCount); // 락 획득 후 계산
+        timeslot.reserve();
+
+        return totalPrice;
+    }
 }
