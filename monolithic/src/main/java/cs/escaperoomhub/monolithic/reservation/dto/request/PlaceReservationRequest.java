@@ -1,4 +1,4 @@
-package cs.escaperoomhub.monolithic.reservation.dto;
+package cs.escaperoomhub.monolithic.reservation.dto.request;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -9,11 +9,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class PlaceReservationRequest {
     @NotNull
-    private Long userId;
-
-    @NotNull
-    private Long timeslotId;
-
-    @NotNull @Min(value = 1)
-    private Long personCount;
+    private Long reservationId;
 }
