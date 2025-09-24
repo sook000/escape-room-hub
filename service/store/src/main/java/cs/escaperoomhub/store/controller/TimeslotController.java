@@ -1,6 +1,8 @@
 package cs.escaperoomhub.store.controller;
 
+import cs.escaperoomhub.store.dto.request.TimeslotBookingCancelRequest;
 import cs.escaperoomhub.store.dto.request.TimeslotBookingRequest;
+import cs.escaperoomhub.store.dto.response.TimeslotBookingCancelResponse;
 import cs.escaperoomhub.store.dto.response.TimeslotBookingResponse;
 import cs.escaperoomhub.store.service.RedisLockService;
 import cs.escaperoomhub.store.service.TimeslotService;
@@ -21,6 +23,13 @@ public class TimeslotController {
     public ResponseEntity<TimeslotBookingResponse> booking(
             @Valid @RequestBody TimeslotBookingRequest request) {
         TimeslotBookingResponse response = timeslotService.booking(request);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping("/timeslot/booking/cancel")
+    public ResponseEntity<TimeslotBookingCancelResponse> cancel(
+            @Valid @RequestBody TimeslotBookingCancelRequest request) {
+        TimeslotBookingCancelResponse response = timeslotService.cancel(request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

@@ -78,4 +78,8 @@ public class Timeslot {
 
         isAvailable = false;
     }
+
+    public void cancel() {
+        isAvailable = true;
+    }
 }
