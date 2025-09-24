@@ -10,6 +10,7 @@ public enum ErrorCode {
     METHOD_NOT_ALLOWED(405, "C002", "Method Not Allowed"),
 //    HANDLE_ACCESS_DENIED(403, "C003", "Access is denied"),
     RESOURCE_NOT_FOUND(404, "C004", "Resource not found"),
+    LOCK_ACQUISITION_FAILED(409, "C005", "Failed to acquire lock"),
 
     // Member
 //    EMAIL_DUPLICATION(400, "M001", "Email is Duplication"),

@@ -24,7 +24,7 @@ public class ReservationController {
     }
 
     @PostMapping("/reservation/place")
-    public ResponseEntity<?> reservationOrder(@Valid @RequestBody PlaceReservationRequest request) {
+    public ResponseEntity<?> reservationOrder(@Valid @RequestBody PlaceReservationRequest request) throws InterruptedException {
         reservationService.placeReservation(request);
         return ResponseEntity.ok().build();
     }

@@ -20,6 +20,7 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final PointService pointService;
     private final TimeslotService timeslotService;
+    private final RedisLockService redisLockService;
 
     @Transactional
     public CreateReservationResponse createReservation(CreateReservationRequest request) {
@@ -29,20 +30,30 @@ public class ReservationService {
     }
 
     @Transactional
-    public void placeReservation(PlaceReservationRequest request) {
-        Reservation reservation = reservationRepository.findById(request.getReservationId())
-                .orElseThrow(() -> Errors.notFound("예약이 존재하지 않습니다."));
-
-        if (reservation.getStatus() == Reservation.ReservationStatus.COMPLETED) {
-            return;
+    public void placeReservation(PlaceReservationRequest request) throws InterruptedException {
+        String key = request.getReservationId().toString();
+        if (!redisLockService.lock(key)) {
+            throw Errors.lockAcquisitionFailed(key);
         }
+        Thread.sleep(100000);
 
-        Long price = timeslotService.reserve(reservation.getTimeslotId(), reservation.getPersonCount());
+        try {
+            Reservation reservation = reservationRepository.findById(request.getReservationId())
+                    .orElseThrow(() -> Errors.notFound("예약이 존재하지 않습니다."));
 
-        pointService.use(reservation.getUserId(), price);
+            if (reservation.getStatus() == Reservation.ReservationStatus.COMPLETED) {
+                return;
+            }
 
-        reservation.complete();
-        reservationRepository.save(reservation);
+            Long price = timeslotService.reserve(reservation.getTimeslotId(), reservation.getPersonCount());
+
+            pointService.use(reservation.getUserId(), price);
+
+            reservation.complete();
+            reservationRepository.save(reservation);
+        } finally {
+            redisLockService.unlock(key);
+        }
     }
 
 }
