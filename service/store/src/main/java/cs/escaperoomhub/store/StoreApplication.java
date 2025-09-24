@@ -1,11 +1,11 @@
-package cs.escaperoomhub.monolithic;
+package cs.escaperoomhub.store;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class RoomApplication {
+public class StoreApplication {
     public static void main(String[] args) {
-        SpringApplication.run(RoomApplication.class, args);
+        SpringApplication.run(StoreApplication.class, args);
     }
 }
