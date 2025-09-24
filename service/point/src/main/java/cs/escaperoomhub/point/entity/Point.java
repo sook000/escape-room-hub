@@ -1,10 +1,7 @@
 package cs.escaperoomhub.point.entity;
 
 import cs.escaperoomhub.point.exception.PointErrors;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +19,9 @@ public class Point {
 
     @Column(nullable = false)
     private Long amount;
+
+    @Version
+    private Long version;
 
     public Point(Long id, Long userId, Long amount) {
         this.pointId = id;
