@@ -15,16 +15,21 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.UUID;
+
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
     @Value("${spring.application.name}")
     private String serviceId;
 
+//    private String traceId() {
+//        return org.slf4j.MDC.get("traceId"); // 필터에서 넣어둔 값(임시)
+//    }
+    // 임시 traceId
     private String traceId() {
-        return org.slf4j.MDC.get("traceId"); // 필터에서 넣어둔 값(임시)
+        return UUID.randomUUID().toString();
     }
-
     private String path(HttpServletRequest req) {
         return req != null ? req.getRequestURI() : null;
     }

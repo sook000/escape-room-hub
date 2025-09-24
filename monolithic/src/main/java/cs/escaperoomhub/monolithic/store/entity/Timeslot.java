@@ -1,6 +1,6 @@
 package cs.escaperoomhub.monolithic.store.entity;
 
-import cs.escaperoomhub.monolithic.exception.Errors;
+import cs.escaperoomhub.monolithic.exception.CommonErrors;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -69,11 +69,11 @@ public class Timeslot {
 
     public void reserve() {
         if (LocalDateTime.now().isBefore(this.openAt)) {
-            throw Errors.timeslotNotOpenYet();
+            throw CommonErrors.timeslotNotOpenYet();
         }
 
         if (!this.isAvailable) {
-            throw Errors.timeslotAlreadyReserved();
+            throw CommonErrors.timeslotAlreadyReserved();
         }
 
         isAvailable = false;

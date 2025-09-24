@@ -1,7 +1,7 @@
 package cs.escaperoomhub.monolithic.reservation.service;
 
 import cs.escaperoomhub.common.snowflake.Snowflake;
-import cs.escaperoomhub.monolithic.exception.Errors;
+import cs.escaperoomhub.monolithic.exception.CommonErrors;
 import cs.escaperoomhub.monolithic.point.service.PointService;
 import cs.escaperoomhub.monolithic.reservation.dto.request.CreateReservationRequest;
 import cs.escaperoomhub.monolithic.reservation.dto.response.CreateReservationResponse;
@@ -33,13 +33,13 @@ public class ReservationService {
     public void placeReservation(PlaceReservationRequest request) throws InterruptedException {
         String key = request.getReservationId().toString();
         if (!redisLockService.lock(key)) {
-            throw Errors.lockAcquisitionFailed(key);
+            throw CommonErrors.lockAcquisitionFailed(key);
         }
-        Thread.sleep(100000);
+//        Thread.sleep(100000);
 
         try {
             Reservation reservation = reservationRepository.findById(request.getReservationId())
-                    .orElseThrow(() -> Errors.notFound("예약이 존재하지 않습니다."));
+                    .orElseThrow(() -> CommonErrors.notFound("예약이 존재하지 않습니다."));
 
             if (reservation.getStatus() == Reservation.ReservationStatus.COMPLETED) {
                 return;

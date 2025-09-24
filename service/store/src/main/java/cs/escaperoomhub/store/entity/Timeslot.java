@@ -67,7 +67,7 @@ public class Timeslot {
         return pricePerPerson * personCount;
     }
 
-    public void reserve() {
+    public void booking() {
         if (LocalDateTime.now().isBefore(this.openAt)) {
             throw StoreErrors.timeslotNotOpenYet();
         }

@@ -1,6 +1,6 @@
 package cs.escaperoomhub.monolithic.point.entity;
 
-import cs.escaperoomhub.monolithic.exception.Errors;
+import cs.escaperoomhub.monolithic.exception.CommonErrors;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -31,7 +31,7 @@ public class Point {
 
     public void use(Long amount) {
         if (this.amount < amount) {
-            throw Errors.insufficientBalance(amount, this.amount);
+            throw CommonErrors.insufficientBalance(amount, this.amount);
         }
         this.amount = this.amount - amount;
     }

@@ -1,7 +1,7 @@
 package cs.escaperoomhub.monolithic.exception;
 
-public final class Errors {
-    private Errors() {}
+public final class CommonErrors {
+    private CommonErrors() {}
 
     public static ClientErrorException timeslotNotOpenYet() {
         return new ClientErrorException(

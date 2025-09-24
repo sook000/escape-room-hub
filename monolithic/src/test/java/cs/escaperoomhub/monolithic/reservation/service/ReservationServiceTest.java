@@ -1,7 +1,7 @@
 package cs.escaperoomhub.monolithic.reservation.service;
 
 import cs.escaperoomhub.monolithic.exception.ClientErrorException;
-import cs.escaperoomhub.monolithic.exception.Errors;
+import cs.escaperoomhub.monolithic.exception.CommonErrors;
 import cs.escaperoomhub.monolithic.point.service.PointService;
 import cs.escaperoomhub.monolithic.reservation.dto.request.CreateReservationRequest;
 import cs.escaperoomhub.monolithic.reservation.dto.request.PlaceReservationRequest;
@@ -91,7 +91,7 @@ class ReservationServiceTest {
         long reservationId = 2L;
         var reservation = new Reservation(reservationId, 7L, 222L, 2L);
         given(reservationRepository.findById(reservationId)).willReturn(java.util.Optional.of(reservation));
-        given(timeslotService.reserve(222L, 2L)).willThrow(Errors.timeslotAlreadyReserved());
+        given(timeslotService.reserve(222L, 2L)).willThrow(CommonErrors.timeslotAlreadyReserved());
 
         var req = makePlaceReq(reservationId);
 
@@ -109,7 +109,7 @@ class ReservationServiceTest {
         var reservation = new Reservation(reservationId, 9L, 333L, 4L);
         given(reservationRepository.findById(reservationId)).willReturn(java.util.Optional.of(reservation));
         given(timeslotService.reserve(333L, 4L)).willReturn(40_000L);
-        willThrow(Errors.insufficientBalance(40000L, 10000L))
+        willThrow(CommonErrors.insufficientBalance(40000L, 10000L))
                 .given(pointService).use(9L, 40_000L);
 
         var req = makePlaceReq(reservationId);
