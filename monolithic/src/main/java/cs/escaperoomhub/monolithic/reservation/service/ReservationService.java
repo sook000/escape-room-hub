@@ -30,7 +30,7 @@ public class ReservationService {
     }
 
     @Transactional
-    public void placeReservation(PlaceReservationRequest request) throws InterruptedException {
+    public void placeReservation(PlaceReservationRequest request) {
         String key = request.getReservationId().toString();
         if (!redisLockService.lock(key)) {
             throw CommonErrors.lockAcquisitionFailed(key);
