@@ -1,5 +1,6 @@
 package cs.escaperoomhub.point.controller;
 
+import cs.escaperoomhub.point.dto.request.PointUseCancelRequest;
 import cs.escaperoomhub.point.dto.request.PointUseRequest;
 import cs.escaperoomhub.point.service.PointService;
 import jakarta.validation.Valid;
@@ -17,6 +18,12 @@ public class PointController {
     @PostMapping("/point/use")
     public ResponseEntity<?> use(@Valid @RequestBody PointUseRequest request) {
         pointService.use(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/point/use/cancel")
+    public ResponseEntity<?> cancel(@Valid @RequestBody PointUseCancelRequest request) {
+        pointService.cancel(request);
         return ResponseEntity.ok().build();
     }
 }

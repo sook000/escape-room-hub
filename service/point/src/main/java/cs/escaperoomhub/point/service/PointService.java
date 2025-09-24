@@ -2,6 +2,7 @@ package cs.escaperoomhub.point.service;
 
 import cs.escaperoomhub.common.exceptionstarter.CommonErrors;
 import cs.escaperoomhub.common.snowflake.Snowflake;
+import cs.escaperoomhub.point.dto.request.PointUseCancelRequest;
 import cs.escaperoomhub.point.dto.request.PointUseRequest;
 import cs.escaperoomhub.point.entity.Point;
 import cs.escaperoomhub.point.entity.PointTransactionHistory;
@@ -51,6 +52,48 @@ public class PointService {
                             point.getPointId(), request.getAmount(),
                             PointTransactionHistory.TransactionType.USE
                     )
+            );
+        } finally {
+            redisLockService.unlock(key);
+        }
+    }
+
+    @Transactional
+    public void cancel(PointUseCancelRequest request) {
+        String key = request.getRequestId().toString();
+
+        if (!redisLockService.lock(key)) {
+            throw CommonErrors.lockAcquisitionFailed(key);
+        }
+
+        try {
+            PointTransactionHistory useHistory = pointTransactionHistoryRepository.findByRequestIdAndTransactionType(
+                    request.getRequestId(),
+                    PointTransactionHistory.TransactionType.USE
+            );
+
+            if (useHistory == null) {
+                throw CommonErrors.notFound("포인트 사용 내역이 존재하지 않습니다.");
+            }
+
+            PointTransactionHistory cancelHistory = pointTransactionHistoryRepository.findByRequestIdAndTransactionType(
+                    request.getRequestId(),
+                    PointTransactionHistory.TransactionType.CANCEL
+            );
+
+            if (cancelHistory != null) {
+                log.info("이미 취소된 요청입니다");
+                return;
+            }
+
+            Point point = pointRepository.findById(useHistory.getPointId())
+                    .orElseThrow(() -> CommonErrors.notFound("포인트가 존재하지 않습니다."));
+
+            point.cancel(useHistory.getAmount());
+            pointTransactionHistoryRepository.save(
+                    new PointTransactionHistory(snowflake.nextId(), request.getRequestId(),
+                            point.getPointId(), useHistory.getAmount(),
+                            PointTransactionHistory.TransactionType.CANCEL)
             );
         } finally {
             redisLockService.unlock(key);
