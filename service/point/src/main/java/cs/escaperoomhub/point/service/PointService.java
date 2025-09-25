@@ -53,6 +53,9 @@ public class PointService {
                             PointTransactionHistory.TransactionType.USE
                     )
             );
+
+            throw CommonErrors.notFound("Point 서비스에서 use 처리 중 예시 예외 notFound 발생");
+
         } finally {
             redisLockService.unlock(key);
         }
@@ -73,7 +76,9 @@ public class PointService {
             );
 
             if (useHistory == null) {
-                throw CommonErrors.notFound("포인트 사용 내역이 존재하지 않습니다.");
+//                throw CommonErrors.notFound("포인트 사용 내역이 존재하지 않습니다.");
+                log.info("포인트 사용 내역이 존재하지 않습니다");
+                return;
             }
 
             PointTransactionHistory cancelHistory = pointTransactionHistoryRepository.findByRequestIdAndTransactionType(

@@ -1,5 +1,6 @@
 package cs.escaperoomhub.reservation.entity;
 
+import cs.escaperoomhub.reservation.exception.ReservationErrors;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -34,11 +35,27 @@ public class Reservation {
         this.personCount = personCount;
     }
 
+    public void request() {
+        if (status != ReservationStatus.CREATED) {
+            throw ReservationErrors.invalidReservationStatus(ReservationStatus.CREATED, status);
+        }
+
+        status = ReservationStatus.REQUESTED;
+    }
+
     public void complete() {
         this.status = ReservationStatus.COMPLETED;
     }
 
+    public void fail() {
+        if (status != ReservationStatus.REQUESTED) {
+            throw ReservationErrors.invalidReservationStatus(ReservationStatus.REQUESTED, status);
+        }
+
+        status = ReservationStatus.FAILED;
+    }
+
     public enum ReservationStatus {
-        CREATED, COMPLETED
+        CREATED, REQUESTED, COMPLETED, FAILED
     }
 }

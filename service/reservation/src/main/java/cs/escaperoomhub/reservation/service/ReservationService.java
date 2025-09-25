@@ -1,5 +1,6 @@
 package cs.escaperoomhub.reservation.service;
 
+import cs.escaperoomhub.common.exceptionstarter.CommonErrors;
 import cs.escaperoomhub.common.snowflake.Snowflake;
 import cs.escaperoomhub.reservation.dto.request.CreateReservationRequest;
 import cs.escaperoomhub.reservation.dto.response.CreateReservationResponse;
@@ -23,5 +24,32 @@ public class ReservationService {
                 request.getUserId(), request.getTimeslotId(), request.getPersonCount()));
 
         return new CreateReservationResponse(reservation.getReservationId());
+    }
+
+    public Reservation getReservation(Long reservationId) {
+        return reservationRepository.findById(reservationId)
+                .orElseThrow(() -> CommonErrors.notFound("예약한 내역이 존재하지 않습니다"));
+    }
+
+    @Transactional
+    public void request(Long reservationId) {
+        Reservation reservation = getReservation(reservationId);
+        reservation.request();
+        reservationRepository.save(reservation);
+
+    }
+
+    @Transactional
+    public void complete(Long reservationId) {
+        Reservation reservation = getReservation(reservationId);
+        reservation.complete();
+        reservationRepository.save(reservation);
+    }
+
+    @Transactional
+    public void fail(Long reservationId) {
+        Reservation reservation = getReservation(reservationId);
+        reservation.fail();
+        reservationRepository.save(reservation);
     }
 }

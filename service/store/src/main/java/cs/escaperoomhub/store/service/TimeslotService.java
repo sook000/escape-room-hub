@@ -75,7 +75,9 @@ public class TimeslotService {
             );
 
             if (bookingHistory == null) {
-                throw CommonErrors.notFound("타임슬롯 booking 내역이 존재하지 않습니다.");
+//                throw CommonErrors.notFound("타임슬롯 booking 내역이 존재하지 않습니다.");
+                log.info("타임슬롯 booking 내역이 존재하지 않습니다");
+                return new TimeslotBookingCancelResponse(0L);
             }
 
             TimeslotTransactionHistory cancelHistory = timeslotTransactionHistoryRepository.findByRequestIdAndTransactionType(
