@@ -2,6 +2,11 @@ package cs.escaperoomhub.common.exceptionstarter;
 
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Getter
 public enum CommonErrorCode implements ErrorCode {
     // Common
@@ -29,5 +34,13 @@ public enum CommonErrorCode implements ErrorCode {
         this.status = status;
         this.code = code;
         this.message = message;
+    }
+
+    private static final Map<String, CommonErrorCode> BY_CODE = Arrays.stream(values())
+            .collect(Collectors.toUnmodifiableMap(CommonErrorCode::getCode, e -> e));
+
+    public static Optional<CommonErrorCode> byCode(String code) {
+        if (code == null) return Optional.empty();
+        return Optional.ofNullable(BY_CODE.get(code.trim()));
     }
 }

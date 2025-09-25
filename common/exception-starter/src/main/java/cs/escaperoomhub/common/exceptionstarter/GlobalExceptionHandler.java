@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({ObjectOptimisticLockingFailureException.class, OptimisticLockException.class,
             StaleObjectStateException.class})
-    public ResponseEntity<ErrorResponse> handleOptimisticLockFailure(ObjectOptimisticLockingFailureException e, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleOptimisticLockFailure(Exception e, HttpServletRequest request) {
         log.warn("Optimistic lock failure", e);
         ErrorCode errorCode = CommonErrorCode.CONCURRENCY_CONFLICT;
         ErrorResponse body = ErrorResponse.of(errorCode, errorCode.getMessage(), traceId(), serviceId, path(request));

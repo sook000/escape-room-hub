@@ -104,9 +104,10 @@ public class TimeslotService {
                     )
             );
 
-            if (true) {
-                throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR,"timeslot cancel 중 예외 발생");
-            }
+            // 보상 트랜잭션 중 에러 발생
+//            if (true) {
+//                throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR,"timeslot cancel 중 예외 발생");
+//            }
 
             return new TimeslotBookingCancelResponse(bookingHistory.getPrice());
         } finally {
