@@ -7,7 +7,9 @@ import cs.escaperoomhub.reservation.client.PointApiClient;
 import cs.escaperoomhub.reservation.client.TimeslotApiClient;
 import cs.escaperoomhub.reservation.client.dto.*;
 import cs.escaperoomhub.reservation.dto.request.PlaceReservationRequest;
+import cs.escaperoomhub.reservation.entity.CompensationRegistry;
 import cs.escaperoomhub.reservation.entity.Reservation;
+import cs.escaperoomhub.reservation.repository.CompensationRegistryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class ReservationCoordinator {
     private final ReservationService reservationService;
+    private final CompensationRegistryRepository compensationRegistryRepository;
     private final TimeslotApiClient timeslotApiClient;
     private final PointApiClient pointApiClient;
     private final RedisLockService redisLockService;
@@ -54,24 +57,32 @@ public class ReservationCoordinator {
 
             } catch (Exception e) { // 로직 중 에러 시 보상 트랜잭션
                 log.info(e.getMessage());
+                rollback(request.getReservationId());
 
-                TimeslotBookingCancelApiRequest timeslotBookingCancelApiRequest = new TimeslotBookingCancelApiRequest(request.getReservationId().toString());
-
-                TimeslotBookingCancelApiResponse bookingCancelApiResponse = timeslotApiClient.cancel(timeslotBookingCancelApiRequest);
-
-                if (bookingCancelApiResponse.getTotalPrice() > 0) {
-                    PointUseCancelApiRequest pointUseCancelApiRequest = new PointUseCancelApiRequest(request.getReservationId().toString());
-
-                    pointApiClient.cancel(pointUseCancelApiRequest);
-                }
-
-                reservationService.fail(request.getReservationId());
-
-
+                throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR,"보상 트랜잭션 중 예외 발생");
             }
 
         } finally {
             redisLockService.unlock(key);
+        }
+    }
+
+    public void rollback(Long reservationId) {
+        try {
+            TimeslotBookingCancelApiRequest timeslotBookingCancelApiRequest = new TimeslotBookingCancelApiRequest(reservationId.toString());
+
+            TimeslotBookingCancelApiResponse bookingCancelApiResponse = timeslotApiClient.cancel(timeslotBookingCancelApiRequest);
+
+            if (bookingCancelApiResponse.getTotalPrice() > 0) {
+                PointUseCancelApiRequest pointUseCancelApiRequest = new PointUseCancelApiRequest(reservationId.toString());
+
+                pointApiClient.cancel(pointUseCancelApiRequest);
+            }
+
+            reservationService.fail(reservationId);
+        } catch (Exception e) {
+            compensationRegistryRepository.save(new CompensationRegistry(reservationId));
+            throw e;
         }
     }
 }

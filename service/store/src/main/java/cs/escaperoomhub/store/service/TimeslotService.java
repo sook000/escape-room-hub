@@ -1,5 +1,7 @@
 package cs.escaperoomhub.store.service;
 
+import cs.escaperoomhub.common.exceptionstarter.BusinessException;
+import cs.escaperoomhub.common.exceptionstarter.CommonErrorCode;
 import cs.escaperoomhub.common.exceptionstarter.CommonErrors;
 import cs.escaperoomhub.common.snowflake.Snowflake;
 import cs.escaperoomhub.store.dto.request.TimeslotBookingCancelRequest;
@@ -101,6 +103,10 @@ public class TimeslotService {
                             TimeslotTransactionHistory.TransactionType.CANCEL
                     )
             );
+
+            if (true) {
+                throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR,"timeslot cancel 중 예외 발생");
+            }
 
             return new TimeslotBookingCancelResponse(bookingHistory.getPrice());
         } finally {
