@@ -12,7 +12,7 @@ public class ArticleViewCountRepository {
     private final StringRedisTemplate redisTemplate;
 
     // hot-article::article::{articleId}::view-count
-    private static final String KEY_FORMAT = "hot-article::article::{articleId}::view-count";
+    private static final String KEY_FORMAT = "hot-article::article::%s::view-count";
 
     public void createOrUpdate(Long articleId, Long viewCount, Duration ttl) {
         redisTemplate.opsForValue().set(generateKey(articleId), String.valueOf(viewCount), ttl);

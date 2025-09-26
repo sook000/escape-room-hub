@@ -1,4 +1,4 @@
-package cs.escaperoom.common.dataserializer;
+package cs.escaperoomhub.common.dataserializer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;

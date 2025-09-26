@@ -1,4 +1,4 @@
-package cs.escaperoom.common.outboxmessagerelay;
+package cs.escaperoomhub.common.outboxmessagerelay;
 
 import lombok.Getter;
 import lombok.ToString;

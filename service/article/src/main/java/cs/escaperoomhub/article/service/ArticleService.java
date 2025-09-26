@@ -1,5 +1,6 @@
 package cs.escaperoomhub.article.service;
 
+import cs.escaperoomhub.common.outboxmessagerelay.OutboxEventPublisher;
 import cs.escaperoomhub.article.entity.Article;
 import cs.escaperoomhub.article.entity.BoardArticleCount;
 import cs.escaperoomhub.article.repository.ArticleRepository;
@@ -8,6 +9,9 @@ import cs.escaperoomhub.article.service.request.ArticleCreateRequest;
 import cs.escaperoomhub.article.service.request.ArticleUpdateRequest;
 import cs.escaperoomhub.article.service.response.ArticlePageResponse;
 import cs.escaperoomhub.article.service.response.ArticleResponse;
+import cs.escaperoomhub.common.event.EventType;
+import cs.escaperoomhub.common.event.payload.ArticleCreatedEventPayload;
+import cs.escaperoomhub.common.event.payload.ArticleUpdatedEventPayload;
 import cs.escaperoomhub.common.snowflake.Snowflake;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ArticleService {
     private final Snowflake snowflake = new Snowflake();
+    private final OutboxEventPublisher outboxEventPublisher;
     private final ArticleRepository articleRepository;
     private final BoardArticleCountRepository boardArticleCountRepository;
 
@@ -33,6 +38,22 @@ public class ArticleService {
                     BoardArticleCount.init(request.getBoardId(), 1L)
             );
         }
+
+        outboxEventPublisher.publish(
+                EventType.ARTICLE_CREATED,
+                ArticleCreatedEventPayload.builder()
+                        .articleId(article.getArticleId())
+                        .title(article.getTitle())
+                        .content(article.getContent())
+                        .boardId(article.getBoardId())
+                        .writerId(article.getWriterId())
+                        .createdAt(article.getCreatedAt())
+                        .modifiedAt(article.getModifiedAt())
+                        .boardArticleCount(count(article.getBoardId()))
+                        .build(),
+                article.getBoardId()
+        );
+
         return ArticleResponse.from(article);
     }
 
@@ -40,6 +61,19 @@ public class ArticleService {
     public ArticleResponse update(Long articleId, ArticleUpdateRequest request) {
         Article article = articleRepository.findById(articleId).orElseThrow();
         article.update(request.getTitle(), request.getContent());
+        outboxEventPublisher.publish(
+                EventType.ARTICLE_UPDATED,
+                ArticleUpdatedEventPayload.builder()
+                        .articleId(article.getArticleId())
+                        .title(article.getTitle())
+                        .content(article.getContent())
+                        .boardId(article.getBoardId())
+                        .writerId(article.getWriterId())
+                        .createdAt(article.getCreatedAt())
+                        .modifiedAt(article.getModifiedAt())
+                        .build(),
+                article.getBoardId()
+        );
         return ArticleResponse.from(article);
     }
 
@@ -52,6 +86,19 @@ public class ArticleService {
         Article article = articleRepository.findById(articleId).orElseThrow();
         articleRepository.delete(article);
         boardArticleCountRepository.decrease(article.getBoardId());
+        outboxEventPublisher.publish(
+                EventType.ARTICLE_UPDATED,
+                ArticleUpdatedEventPayload.builder()
+                        .articleId(article.getArticleId())
+                        .title(article.getTitle())
+                        .content(article.getContent())
+                        .boardId(article.getBoardId())
+                        .writerId(article.getWriterId())
+                        .createdAt(article.getCreatedAt())
+                        .modifiedAt(article.getModifiedAt())
+                        .build(),
+                article.getBoardId()
+        );
     }
 
     public ArticlePageResponse readAll(Long boardId, Long page, Long pageSize) {

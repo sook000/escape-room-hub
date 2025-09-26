@@ -1,4 +1,4 @@
-package cs.escaperoom.common.outboxmessagerelay;
+package cs.escaperoomhub.common.outboxmessagerelay;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -19,7 +19,7 @@ import java.util.concurrent.Executors;
 
 @EnableAsync
 @Configuration
-@ComponentScan("advanced.board.common.outboxmessagerelay")
+@ComponentScan("cs.escaperoomhub.common.outboxmessagerelay")
 @EnableScheduling
 public class MessageRelayConfig {
     @Value("${spring.kafka.bootstrap-servers}")

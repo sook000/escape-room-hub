@@ -1,4 +1,4 @@
-package cs.escaperoom.common.outboxmessagerelay;
+package cs.escaperoomhub.common.outboxmessagerelay;
 
 import cs.escaperoomhub.common.event.EventType;
 import jakarta.persistence.*;

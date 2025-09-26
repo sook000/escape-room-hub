@@ -1,6 +1,6 @@
 package cs.escaperoomhub.common.event;
 
-import cs.escaperoom.common.dataserializer.DataSerializer;
+import cs.escaperoomhub.common.dataserializer.DataSerializer;
 import lombok.Getter;
 
 @Getter
