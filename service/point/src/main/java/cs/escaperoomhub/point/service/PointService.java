@@ -1,5 +1,7 @@
 package cs.escaperoomhub.point.service;
 
+import cs.escaperoomhub.common.event.Event;
+import cs.escaperoomhub.common.event.EventPayload;
 import cs.escaperoomhub.common.exceptionstarter.CommonErrors;
 import cs.escaperoomhub.common.snowflake.Snowflake;
 import cs.escaperoomhub.point.dto.request.PointUseCancelRequest;
@@ -8,11 +10,13 @@ import cs.escaperoomhub.point.entity.Point;
 import cs.escaperoomhub.point.entity.PointTransactionHistory;
 import cs.escaperoomhub.point.repository.PointRepository;
 import cs.escaperoomhub.point.repository.PointTransactionHistoryRepository;
+import cs.escaperoomhub.point.service.eventHandler.EventHandler;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,6 +27,15 @@ public class PointService {
     private final PointRepository pointRepository;
     private final PointTransactionHistoryRepository pointTransactionHistoryRepository;
     private final RedisLockService redisLockService;
+    private final List<EventHandler> eventHandlers;
+
+    public void handleEvent(Event<EventPayload> event) {
+        for (EventHandler eventHandler : eventHandlers) {
+            if (eventHandler.supports(event)) {
+                eventHandler.handle(event);
+            }
+        }
+    }
 
     @Transactional
     public void use(PointUseRequest request) {
