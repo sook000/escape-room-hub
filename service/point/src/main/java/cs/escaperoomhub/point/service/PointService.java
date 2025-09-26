@@ -54,7 +54,7 @@ public class PointService {
                     )
             );
 
-            throw CommonErrors.notFound("Point 서비스에서 use 처리 중 예시 예외 notFound 발생1");
+//            throw CommonErrors.notFound("Point 서비스에서 use 처리 중 예시 예외 notFound 발생1");
 
         } finally {
             redisLockService.unlock(key);
