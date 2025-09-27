@@ -16,7 +16,8 @@ public enum EventType {
     COMMENT_DELETED(CommentDeletedEventPayload.class, Topic.ADVANCED_BOARD_COMMENT),
     ARTICLE_LIKED(ArticleLikedEventPayload.class, Topic.ADVANCED_BOARD_LIKE),
     ARTICLE_UNLIKED(ArticleUnlikedEventPayload.class, Topic.ADVANCED_BOARD_LIKE),
-    ARTICLE_VIEWED(ArticleViewedEventPayload.class, Topic.ADVANCED_BOARD_VIEW);
+    ARTICLE_VIEWED(ArticleViewedEventPayload.class, Topic.ADVANCED_BOARD_VIEW),
+    COMPENSATION_REQUIRED(CompensationRequiredEventPayload.class, Topic.RESERVATION_COMPENSATION);
 
     private final Class<? extends EventPayload> payloadClass;
     private final String topic;
@@ -35,5 +36,7 @@ public enum EventType {
         public static final String ADVANCED_BOARD_COMMENT = "advanced-board-comment";
         public static final String ADVANCED_BOARD_LIKE = "advanced-board-like";
         public static final String ADVANCED_BOARD_VIEW = "advanced-board-view";
+
+        public static final String RESERVATION_COMPENSATION = "reservation-compensation";
     }
 }

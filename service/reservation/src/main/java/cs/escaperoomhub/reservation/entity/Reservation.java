@@ -48,8 +48,8 @@ public class Reservation {
     }
 
     public void fail() {
-        if (status != ReservationStatus.REQUESTED) {
-            throw ReservationErrors.invalidReservationStatus(ReservationStatus.REQUESTED, status);
+        if (status != ReservationStatus.CREATED) {
+            throw ReservationErrors.invalidReservationStatus(ReservationStatus.CREATED, status);
         }
 
         status = ReservationStatus.FAILED;
